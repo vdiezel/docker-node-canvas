@@ -11,38 +11,44 @@ RUN yum -y update \
 && yum -y groupinstall "Development Tools" \
 && yum install -y gcc-c++ cairo-devel pango-devel python3
 
-RUN ls $LIBS
-
-# canvas is installed as part of chartjs-node-canvas
 RUN npm init -y
 
-# make sure we look for binaries in the lib folder first
+# canvas is installed as part of chartjs-node-canvas
+# (we install the chartjs-node-canvas so we can run a test)
 RUN npm i chartjs-node-canvas@^4.1.6 chart.js@^3.9.1 --build-from-source
 
 RUN mkdir lib
-RUN cp $LIBS/libpng15.so.15 lib
-RUN ls lib
 
-#RUN export LDFLAGS=-Wl,-rpath=/var/task/lib/
+# moving the required libraries (we will need them when we deploy lambda)
+RUN cp -L $LIBS/libpng15.so.15 lib
+
+# We remove the original libraries simply to make our test more confident
+RUN rm $LIBS/libpng15.so.15
+
+# rebuild with new rpath; lambda containers ar started within /var/task/ as their root
+# so we expect /lib to be in the root of the deployed package
+# rpath sets the library path for canvas.node
 RUN export LDFLAGS=-Wl,-rpath=/var/task/lib && cd node_modules/canvas && npx node-gyp rebuild
 
-# moving the required libraries (as they are expected to be delived with the lamdba)
-# RUN ls lib
+# tests to make sure our linking works
 
-# This is required to mimic where lambda tries to lookup the lib (for the test)
-#RUN cp -r lib /var/task/
+# test if the RPATH is set correctly
+RUN objdump -p node_modules/canvas/build/Release/canvas.node | grep RPATH
 
-# run test
-#RUN ls
-#RUN ls node_modules/canvas/build/Release/
+# test if there is not secret RUNPATH that might mess with us
+RUN readelf -d node_modules/canvas/build/Release/canvas.node | grep 'R.*PATH'
+
+# check all libraries are properly linked
+RUN ldd node_modules/canvas/build/Release/canvas.node
+
+# run the render test
+RUN node index.js
 
 # copy to a dist folder
-#RUN ls $LIBS
 RUN mkdir $OUT/dist
 RUN cp -Lra . $OUT/dist
-RUN export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/var/task/lib && ldd $OUT/dist/node_modules/canvas/build/Release/canvas.node
 
-RUN objdump -p $OUT/dist/node_modules/canvas/build/Release/canvas.node | grep RPATH
-RUN readelf -d $OUT/dist/node_modules/canvas/build/Release/canvas.node | grep 'R.*PATH'
+RUN ldd $OUT/dist/node_modules/canvas/build/Release/canvas.node
 
-# RUN node index.js
+# This tests if moving around our files broke the linking
+# RUN ldd $OUT/dist/node_modules/canvas/build/Release/canvas.node
