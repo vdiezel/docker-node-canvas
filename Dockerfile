@@ -18,11 +18,15 @@ RUN npm init -y
 
 # make sure we look for binaries in the lib folder first
 RUN npm i chartjs-node-canvas@^4.1.6 chart.js@^3.9.1 --build-from-source
+
+RUN mkdir lib
+RUN cp $LIBS/libpng15.so.15 lib
+RUN ls lib
+
+#RUN export LDFLAGS=-Wl,-rpath=/var/task/lib/
 RUN export LDFLAGS=-Wl,-rpath=/var/task/lib && cd node_modules/canvas && npx node-gyp rebuild
 
 # moving the required libraries (as they are expected to be delived with the lamdba)
-RUN mkdir lib
-RUN mv $LIBS/libpng15.so.15 lib/
 # RUN ls lib
 
 # This is required to mimic where lambda tries to lookup the lib (for the test)
@@ -35,7 +39,10 @@ RUN mv $LIBS/libpng15.so.15 lib/
 # copy to a dist folder
 #RUN ls $LIBS
 RUN mkdir $OUT/dist
-RUN cp -ra . $OUT/dist
-RUN ldd $OUT/dist/node_modules/canvas/build/Release/canvas.node
+RUN cp -Lra . $OUT/dist
+RUN export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/var/task/lib && ldd $OUT/dist/node_modules/canvas/build/Release/canvas.node
 
-RUN node index.js
+RUN objdump -p $OUT/dist/node_modules/canvas/build/Release/canvas.node | grep RPATH
+RUN readelf -d $OUT/dist/node_modules/canvas/build/Release/canvas.node | grep 'R.*PATH'
+
+# RUN node index.js
