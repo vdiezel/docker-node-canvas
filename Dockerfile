@@ -26,28 +26,71 @@ RUN mkdir lib
 # moving the required libraries (we will need them when we deploy lambda)
 # do not use "mv" as it breaks symbolic links!!!
 # if you don't care duplicating binaries, you can jsut copy all of them...
-RUN cp -L $LIBS/libpng15.so.15 lib \
-&& cp -L $LIBS/libpixman-1.so.0 lib \
-&& cp -L $LIBS/libcairo.so.2 lib \
-&& cp -L $LIBS/libpangocairo-1.0.so.0 lib \
-&& cp -L $LIBS/libpango-1.0.so.0 lib \
-&& cp -L $LIBS/libpangoft2-1.0.so.0 lib \
-&& cp -L $LIBS/libharfbuzz.so.0 lib \
-&& cp -L $LIBS/libgraphite2.so.3 lib \
-&& cp -L $LIBS/libgobject-2.0.so.0 lib \
-&& cp -L $LIBS/libEGL.so.1 lib \
-&& cp -L $LIBS/libxcb-shm.so.0 lib \
-&& cp -L $LIBS/libxcb.so.1 lib \
-&& cp -L $LIBS/libxcb-render.so.0 lib \
-&& cp -L $LIBS/libXrender.so.1 lib \
-&& cp -L $LIBS/libX11.so.6 lib \
-&& cp -L $LIBS/libXext.so.6 lib \
-&& cp -L $LIBS/libGL.so.1 lib \
-&& cp -L $LIBS/libthai.so.0 lib \
-&& cp -L $LIBS/libfribidi.so.0 lib \
-&& cp -L $LIBS/libGLdispatch.so.0 lib \
-&& cp -L $LIBS/libXau.so.6 lib \
-&& cp -L $LIBS/libGLX.so.0 lib
+RUN cp -L $LIBS/libpixman-1.so.0 lib/ \
+&& cp -L $LIBS/libcairo.so.2 lib/ \
+&& cp -L $LIBS/libpng15.so.15 lib/ \
+&& cp -L $LIBS/libpangocairo-1.0.so.0 lib/ \
+&& cp -L $LIBS/libpango-1.0.so.0 lib/ \
+&& cp -L $LIBS/libgobject-2.0.so.0 lib/ \
+&& cp -L $LIBS/libglib-2.0.so.0 lib/ \
+&& cp -L $LIBS/libfreetype.so.6 lib/ \
+&& cp -L $LIBS/libstdc++.so.6 lib/ \
+&& cp -L $LIBS/libm.so.6 lib/ \
+&& cp -L $LIBS/libgcc_s.so.1 lib/ \
+&& cp -L $LIBS/libpthread.so.0 lib/ \
+&& cp -L $LIBS/libc.so.6 lib/ \
+&& cp -L $LIBS/libfontconfig.so.1 lib/ \
+&& cp -L $LIBS/libEGL.so.1 lib/ \
+&& cp -L $LIBS/libdl.so.2 lib/ \
+&& cp -L $LIBS/libxcb-shm.so.0 lib/ \
+&& cp -L $LIBS/libxcb.so.1 lib/ \
+&& cp -L $LIBS/libxcb-render.so.0 lib/ \
+&& cp -L $LIBS/libXrender.so.1 lib/ \
+&& cp -L $LIBS/libX11.so.6 lib/ \
+&& cp -L $LIBS/libXext.so.6 lib/ \
+&& cp -L $LIBS/libz.so.1 lib/ \
+&& cp -L $LIBS/libGL.so.1 lib/ \
+&& cp -L $LIBS/librt.so.1 lib/ \
+&& cp -L $LIBS/libpangoft2-1.0.so.0 lib/ \
+&& cp -L $LIBS/libthai.so.0 lib/ \
+&& cp -L $LIBS/libfribidi.so.0 lib/ \
+&& cp -L $LIBS/libpcre.so.1 lib/ \
+&& cp -L $LIBS/libffi.so.6 lib/ \
+&& cp -L $LIBS/libbz2.so.1 lib/ \
+&& cp -L $LIBS/libexpat.so.1 lib/ \
+&& cp -L $LIBS/libuuid.so.1 lib/ \
+&& cp -L $LIBS/libGLdispatch.so.0 lib/ \
+&& cp -L $LIBS/libXau.so.6 lib/ \
+&& cp -L $LIBS/libGLX.so.0 lib/ \
+&& cp -L $LIBS/libharfbuzz.so.0 lib/ \
+&& cp -L $LIBS/libgraphite2.so.3 lib/
+
+# These are the only libraries that are not part of
+# the image, but somehow I still had to copy all dependencies
+# in order to get lambda running, so we end up with 15MB instead of 7MB
+
+#RUN cp -L $LIBS/libpng15.so.15 lib \
+#&& cp -L $LIBS/libpixman-1.so.0 lib \
+#&& cp -L $LIBS/libcairo.so.2 lib \
+#&& cp -L $LIBS/libpangocairo-1.0.so.0 lib \
+#&& cp -L $LIBS/libpango-1.0.so.0 lib \
+#&& cp -L $LIBS/libpangoft2-1.0.so.0 lib \
+#&& cp -L $LIBS/libharfbuzz.so.0 lib \
+#&& cp -L $LIBS/libgraphite2.so.3 lib \
+#&& cp -L $LIBS/libgobject-2.0.so.0 lib \
+#&& cp -L $LIBS/libEGL.so.1 lib \
+#&& cp -L $LIBS/libxcb-shm.so.0 lib \
+#&& cp -L $LIBS/libxcb.so.1 lib \
+#&& cp -L $LIBS/libxcb-render.so.0 lib \
+#&& cp -L $LIBS/libXrender.so.1 lib \
+#&& cp -L $LIBS/libX11.so.6 lib \
+#&& cp -L $LIBS/libXext.so.6 lib \
+#&& cp -L $LIBS/libGL.so.1 lib \
+#&& cp -L $LIBS/libthai.so.0 lib \
+#&& cp -L $LIBS/libfribidi.so.0 lib \
+#&& cp -L $LIBS/libGLdispatch.so.0 lib \
+#&& cp -L $LIBS/libXau.so.6 lib \
+#&& cp -L $LIBS/libGLX.so.0 lib
 
 # rebuild with new rpath; lambda containers are started within /var/task/ as their root
 # so we expect /lib to be in the root of the deployed package
@@ -66,29 +109,67 @@ RUN readelf -d node_modules/canvas/build/Release/canvas.node | grep 'R.*PATH'
 RUN ldd node_modules/canvas/build/Release/canvas.node
 
 # We remove the original libraries simply to make our test more confident
-RUN rm $LIBS/libpng15.so.15 \
-&& rm $LIBS/libpixman-1.so.0 \
+#RUN rm $LIBS/libpng15.so.15 \
+#&& rm $LIBS/libpixman-1.so.0 \
+#&& rm $LIBS/libcairo.so.2 \
+#&& rm $LIBS/libpangocairo-1.0.so.0 \
+#&& rm $LIBS/libpango-1.0.so.0 \
+#&& rm $LIBS/libpangoft2-1.0.so.0 \
+#&& rm $LIBS/libharfbuzz.so.0 \
+#&& rm $LIBS/libgraphite2.so.3 \
+#&& rm $LIBS/libgobject-2.0.so.0 \
+#&& rm $LIBS/libEGL.so.1 \
+#&& rm $LIBS/libxcb-shm.so.0 \
+#&& rm $LIBS/libxcb.so.1 \
+#&& rm $LIBS/libxcb-render.so.0 \
+#&& rm $LIBS/libXrender.so.1 \
+#&& rm $LIBS/libX11.so.6 \
+#&& rm $LIBS/libXext.so.6 \
+#&& rm $LIBS/libGL.so.1 \
+#&& rm $LIBS/libthai.so.0 \
+#&& rm $LIBS/libfribidi.so.0 \
+#&& rm $LIBS/libGLdispatch.so.0 \
+#&& rm $LIBS/libXau.so.6 \
+#&& rm $LIBS/libGLX.so.0
+
+RUN rm $LIBS/libpixman-1.so.0 \
 && rm $LIBS/libcairo.so.2 \
+&& rm $LIBS/libpng15.so.15 \
 && rm $LIBS/libpangocairo-1.0.so.0 \
 && rm $LIBS/libpango-1.0.so.0 \
-&& rm $LIBS/libpangoft2-1.0.so.0 \
-&& rm $LIBS/libharfbuzz.so.0 \
-&& rm $LIBS/libgraphite2.so.3 \
 && rm $LIBS/libgobject-2.0.so.0 \
+&& rm $LIBS/libglib-2.0.so.0 \
+&& rm $LIBS/libfreetype.so.6 \
+&& rm $LIBS/libstdc++.so.6 \
+&& rm $LIBS/libm.so.6 \
+&& rm $LIBS/libgcc_s.so.1 \
+&& rm $LIBS/libpthread.so.0 \
+&& rm $LIBS/libc.so.6 \
+&& rm $LIBS/libfontconfig.so.1 \
 && rm $LIBS/libEGL.so.1 \
+&& rm $LIBS/libdl.so.2 \
 && rm $LIBS/libxcb-shm.so.0 \
 && rm $LIBS/libxcb.so.1 \
 && rm $LIBS/libxcb-render.so.0 \
 && rm $LIBS/libXrender.so.1 \
 && rm $LIBS/libX11.so.6 \
 && rm $LIBS/libXext.so.6 \
+&& rm $LIBS/libz.so.1 \
 && rm $LIBS/libGL.so.1 \
+&& rm $LIBS/librt.so.1 \
+&& rm $LIBS/libpangoft2-1.0.so.0 \
 && rm $LIBS/libthai.so.0 \
 && rm $LIBS/libfribidi.so.0 \
+&& rm $LIBS/libpcre.so.1 \
+&& rm $LIBS/libffi.so.6 \
+&& rm $LIBS/libbz2.so.1 \
+&& rm $LIBS/libexpat.so.1 \
+&& rm $LIBS/libuuid.so.1 \
 && rm $LIBS/libGLdispatch.so.0 \
 && rm $LIBS/libXau.so.6 \
-&& rm $LIBS/libGLX.so.0
-
+&& rm $LIBS/libGLX.so.0 \
+&& rm $LIBS/libharfbuzz.so.0 \
+&& rm $LIBS/libgraphite2.so.3
 
 # run the render test
 RUN node index.js

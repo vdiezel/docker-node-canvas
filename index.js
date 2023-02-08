@@ -1,6 +1,11 @@
-process.env["PATH"] = process.env["PATH"] + ":" + process.env["LAMBDA_TASK_ROOT"] + "/lib"
-process.env["LD_LIBRARY_PATH"] = process.env["LAMBDA_TASK_ROOT"] + "/lib"
-process.env["PKG_CONFIG_PATH"] = process.env["LAMBDA_TASK_ROOT"] + "/lib"
+// This might be an alternative to using rpath when building the canvas
+// that would allow us to actually reuse shared libraries that are already
+// part of the /lib64 folder of the AMAZON container -
+// but I don't have the nerves and time anymore to extensively follow this approach
+
+//process.env["PATH"] = process.env["PATH"] + ":" + process.env["LAMBDA_TASK_ROOT"] + "/lib"
+//process.env["LD_LIBRARY_PATH"] = process.env["LAMBDA_TASK_ROOT"] + "/lib"
+//process.env["PKG_CONFIG_PATH"] = process.env["LAMBDA_TASK_ROOT"] + "/lib"
 
 const { ChartJSNodeCanvas } = require('chartjs-node-canvas')
 const fs = require('fs')
@@ -8,10 +13,6 @@ const fs = require('fs')
 const create = async () => {
   const timesInMs = [1, 2, 3]
   const values =  [1, 2, 3]
-
-  console.log(process.env.PATH)
-  console.log(process.env.LD_LIBRARY_PATH)
-  console.log(process.env.PKG_CONFIG_PATH)
 
   const data = {
     labels: timesInMs,
